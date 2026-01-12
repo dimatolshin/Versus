@@ -1,0 +1,16 @@
+Django==5.1.5
+django_cors_headers==4.6.0
+adrf==0.1.8
+djangorestframework==3.15.2
+drf-yasg==1.21.8
+psycopg2-binary==2.9.10
+uvicorn==0.32.1
+python-dotenv==1.0.1
+whitenoise==6.8.2
+aiogram==3.15.0
+Pillow==11.0.0
+redis==5.2.1
+django-redis==5.4.0
+celery==5.4.0
+django-celery-beat==2.7.0
+django-celery-results==2.5.1
