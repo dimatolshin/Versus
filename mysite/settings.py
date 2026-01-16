@@ -30,9 +30,14 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', ]
-CORS_ALLOWED_ORIGINS = []
-CSRF_TRUSTED_ORIGINS = []
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')]
+cors_allowed = os.getenv('CORS_ALLOWED', 'http://localhost')
+CORS_ALLOWED_ORIGINS = [
+    host.strip() if '://' in host else f'http://{host.strip()}'
+    for host in cors_allowed.split(',')
+    if host.strip()
+]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 CORS_ALLOW_HEADERS = list(default_headers)
 SESSION_COOKIE_AGE = 6 * 60 * 60
 # Application definition
