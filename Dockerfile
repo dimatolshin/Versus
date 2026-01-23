@@ -11,5 +11,5 @@ RUN pip install -r requirements.txt
 
 
 CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && \
-    uvicorn app.asgi:application --workers 5 --host 0.0.0.0 --port 8000 & \
+    uvicorn main.asgi:application --workers 5 --host 0.0.0.0 --port 8000 & \
     python telegram.py"]
