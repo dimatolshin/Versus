@@ -149,12 +149,11 @@ async def main_page(request: HttpRequest, *args, **kwargs):
     user_balance = kwargs.get('user_balance')
 
     season = await Season.objects.select_related('first_team', 'second_team').alast()
-    context = {'request': request}
     data = response_serializer.MainPageSerializer({
         'season': season,
         'user': user,
         'user_balance': user_balance,
-    },context=context).data
+    }).data
 
     return JsonResponse(data, status=200)
 
@@ -437,7 +436,7 @@ async def get_shop(request: HttpRequest, *args, **kwargs):
     user = kwargs.get('user')
     traders = [trader async for trader in Traders.objects.select_related('currency').order_by('lvl').all()]
     ofices = [ofice async for ofice in Ofice.objects.select_related('currency').order_by('lvl').all()]
-    context = {'my_lvl': user_balance.my_ofice.ofice.lvl,'request':request}
+    context = {'my_lvl': user_balance.my_ofice.ofice.lvl}
     data = response_serializer.ShopSerializer({
         'traders': traders,
         'ofices': ofices,

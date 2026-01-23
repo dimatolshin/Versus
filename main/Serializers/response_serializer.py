@@ -1,3 +1,5 @@
+import os
+
 from asgiref.sync import sync_to_async
 from rest_framework import serializers
 from ..models import *
@@ -31,15 +33,11 @@ class TradersSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_picture(self, obj):
-        request = self.context.get('request')
         if not obj.picture:
             return None
 
         url = obj.picture.url  # /media/...
-        if request is not None:
-            return request.build_absolute_uri(url)
-
-        return url
+        return os.getenv('BACK_URL') + url
 
 
 class UserTradersSerializer(serializers.ModelSerializer):
@@ -112,15 +110,11 @@ class TeamSerializer(serializers.ModelSerializer):
             return int(str(obj.boost_team).split('.')[1])
 
     def get_picture(self, obj):
-        request = self.context.get('request')
         if not obj.picture:
             return None
 
-        url = obj.picture.url  # /media/...
-        if request is not None:
-            return request.build_absolute_uri(url)
-
-        return url
+        url = obj.picture.url
+        return os.getenv('BACK_URL') + url
 
 
 class SeasonSerializer(serializers.ModelSerializer):
@@ -218,7 +212,3 @@ class SpecialOficeSerializer(serializers.ModelSerializer):
 class ShopSerializer(serializers.Serializer):
     traders = TradersSerializer(many=True, allow_null=True)
     ofices = SpecialOficeSerializer(many=True, allow_null=True)
-
-
-
-
