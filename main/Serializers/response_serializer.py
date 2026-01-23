@@ -24,10 +24,22 @@ class MainPAgeOficeSerializer(serializers.ModelSerializer):
 
 class TradersSerializer(serializers.ModelSerializer):
     currency = CurrencySerializer()
+    picture = serializers.SerializerMethodField()
 
     class Meta:
         model = Traders
         fields = '__all__'
+
+    def get_picture(self, obj):
+        request = self.context.get('request')
+        if not obj.picture:
+            return None
+
+        url = obj.picture.url  # /media/...
+        if request is not None:
+            return request.build_absolute_uri(url)
+
+        return url
 
 
 class UserTradersSerializer(serializers.ModelSerializer):
@@ -65,6 +77,8 @@ class UserBalanceSerializer(serializers.ModelSerializer):
                   'earn_in_team_per_month', 'earn_in_team_per_weak', 'list_of_my_traders', 'your_share_in_team']
 
     def get_your_share_in_team(self, obj):
+        if obj.team.money_team == 0 or obj.earn_in_team_per_month == 0:
+            return 0
         if obj.team:
             return float((obj.earn_in_team_per_month * 100) / obj.team.money_team)
         else:
@@ -76,6 +90,7 @@ class TeamSerializer(serializers.ModelSerializer):
     ear_per_minute = serializers.SerializerMethodField()
     boost_team = serializers.SerializerMethodField()
     total_players = serializers.IntegerField(read_only=True)
+    picture = serializers.SerializerMethodField()
 
     class Meta:
         model = Team
@@ -95,6 +110,17 @@ class TeamSerializer(serializers.ModelSerializer):
             return None
         else:
             return int(str(obj.boost_team).split('.')[1])
+
+    def get_picture(self, obj):
+        request = self.context.get('request')
+        if not obj.picture:
+            return None
+
+        url = obj.picture.url  # /media/...
+        if request is not None:
+            return request.build_absolute_uri(url)
+
+        return url
 
 
 class SeasonSerializer(serializers.ModelSerializer):
