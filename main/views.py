@@ -60,7 +60,8 @@ async def create_my_session(request: HttpRequest):
         trader = await Traders.objects.filter(lvl=1).afirst()
         if not trader:
             return JsonResponse({'Error': 'Create trader!'}, status=404)
-        await my_ofice.traders.aadd(trader)
+        my_trader = await UserTraders.objects.acreate(user=user,trader=trader)
+        await my_ofice.traders.aadd(my_trader)
         # TODO добавить трейдера(ов) если они есть в самом начале или выдать какие то деньги
         user_balance = await UserBalance.objects.acreate(user=user, my_ofice=my_ofice)
         await user_balance.list_of_my_traders.aadd(trader)
