@@ -64,7 +64,7 @@ async def create_my_session(request: HttpRequest):
         await my_ofice.traders.aadd(my_trader)
         # TODO добавить трейдера(ов) если они есть в самом начале или выдать какие то деньги
         user_balance = await UserBalance.objects.acreate(user=user, my_ofice=my_ofice)
-        await user_balance.list_of_my_traders.aadd(trader)
+        await user_balance.list_of_my_traders.aadd(my_trader)
 
     # [await UserSocialTask.objects.acreate(user=user, social_task=task) async for task in
     #  SocialTask.objects.all() if
