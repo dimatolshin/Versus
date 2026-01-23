@@ -42,8 +42,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ../storage/backend/media_data:/media
-      - ../storage/backend/static_data:/staticfiles
+      - ../storage/backend/media_data:/app/media
+      - ../storage/backend/static_data:/app/staticfiles
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
