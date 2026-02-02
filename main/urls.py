@@ -13,5 +13,10 @@ urlpatterns = [
     path('get_shop/',get_shop),
     path('buy_something/',buy_something),
     path('get_data_team/',get_data_team),
+    path('info_person/',info_person),
+    path('change_nickname/',change_nickname),
+
+
+
 
 ]

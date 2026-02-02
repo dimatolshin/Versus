@@ -193,6 +193,9 @@ class ClaimUserHistorySerializer(serializers.ModelSerializer):
 class MyOficeSerializer(serializers.Serializer):
     productivity_per_day = serializers.IntegerField()
     history_claims = ClaimUserHistorySerializer(many=True, allow_null=True)
+    all = serializers.IntegerField()
+    occupied = serializers.IntegerField()
+    empty = serializers.IntegerField()
 
 
 class SpecialOficeSerializer(serializers.ModelSerializer):

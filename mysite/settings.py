@@ -157,6 +157,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'main.tasks.calculate_personal_money',
         'schedule': crontab(hour=0, minute=0),
     },
+    'create_team_stats': {
+        'task': 'main.tasks.create_team_stats',
+        'schedule': crontab(hour=0, minute=40),
+    },
     'check_difference': {
         'task': 'main.tasks.decide_about_stop_boost',
         'schedule': crontab(hour=23, minute=59),

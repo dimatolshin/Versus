@@ -27,3 +27,7 @@ class ApplyTradersInOfice(serializers.Serializer):
 class BuySomething(serializers.Serializer):
     model = serializers.CharField()
     id_products = serializers.IntegerField()
+
+
+class ChangeNickName(serializers.Serializer):
+    nickname = serializers.CharField()

@@ -52,7 +52,7 @@ def activate_team_boost():
 
 @shared_task(acks_late=True, reject_on_worker_lost=True)
 def calculate_personal_money():
-    from .models import UserBalance, Transaction, UserOfice, Season
+    from .models import UserBalance, Transaction, UserOfice, Season, TeamStats
     season = Season.objects.select_related('first_team', 'second_team').filter(active=True).last()
     if season:
         first_team = season.first_team
@@ -86,6 +86,9 @@ def calculate_personal_money():
                 earn = (user_balance.my_bank + earn) - max_value_for_bank
                 user_balance.my_bank += earn
 
+            stats_team = TeamStats.objects.filter(team=user_balance.team).first()
+            stats_team.total_coins += earn
+            stats_team.save()
             user_balance.earn_in_team_per_weak += earn
             user_balance.save()
             user_balance.team.money_for_day += earn
@@ -130,44 +133,26 @@ def finish_season(season_id):
 
     season.active = False
     season.save()
-    create_season.apply_async(eta=season.finish_time + timedelta(days=2))
 
 
 @shared_task(acks_late=True, reject_on_worker_lost=True)
-def create_season():
-    from .models import Team, Season, UserBalance
-
-    first_team = Team.objects.first()
-    second_team = Team.objects.last()
-    if not first_team or second_team:
-        return
-
-    start = timezone.now()
-    finish = start + timedelta(days=21)
-
-    season = Season.objects.create(
-        first_team=first_team,
-        second_team=second_team,
-        start_time=start,
-        finish_time=finish,
-        active=True
-    )
-
-    for user_balance in UserBalance.objects.all():
-        user_balance.earn_in_team_per_month = 0
-        user_balance.earn_in_team_per_weak = 0
-        user_balance.team = None
-        user_balance.can_change_team_for_pay = True
-        user_balance.save()
-
-    for team in Team.objects.all():
-        team.money_team = 0
-        team.money_for_weak = 0
-        team.money_for_day = 0
-        team.boost_team = 1.0
-        team.save()
-
-    finish_season.apply_async(
-        args=[season.id],
-        eta=finish
-    )
+def create_team_stats():
+    from .models import Team, TeamStats, UserBalance,Season
+    season = Season.objects.filter(active=True).afirst()
+    if season:
+        for i in Team.objects.all():
+            old_stats = TeamStats.objects.filter(team=i).first()
+            salary = 0
+            len_of_traders = 0
+            productivity_per_day = 0
+            for person in UserBalance.objects.filter(team=i).prefetch_related('my_ofice__traders').select_related(
+                    'my_ofice__ofice').all():
+                for i in person.my_ofice.traders.all():
+                    len_of_traders += 1
+                    salary += i.trader.earn_for_day
+                productivity_per_day += salary * (1 + person.my_ofice.ofice.comfort)
+            TeamStats.objects.acreate(team=i, total_coins=old_stats.total_coins,
+                                      productivity_per_day=old_stats.productivity_per_day / old_stats.total_players,
+                                      total_players=old_stats.total_players, total_traders=len_of_traders)
+    else:
+        pass
