@@ -646,6 +646,9 @@ async def get_data_team(request: HttpRequest, *args, **kwargs):
 
     if not stats_for_first_team and not stats_for_second:
         return JsonResponse({'Error': 'Статистика для команд не создана'}, status=404)
+
+    if not user_balance.team:
+        return JsonResponse({'Error':'У тебя нет команды'},status=404)
     all_day_total_coins_1 = []
     all_day_productivity_per_day_1 = []
     all_day_total_players_1 = []
