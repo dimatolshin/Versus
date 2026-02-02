@@ -124,7 +124,7 @@ class SeasonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Season
-        fields = ['id', 'first_team', 'second_team', 'timer']
+        fields = ['id', 'first_team', 'second_team', 'timer','prize']
 
     def get_timer(self, obj):
         now = timezone.now()
