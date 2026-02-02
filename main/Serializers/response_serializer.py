@@ -75,12 +75,12 @@ class UserBalanceSerializer(serializers.ModelSerializer):
                   'earn_in_team_per_month', 'earn_in_team_per_weak', 'list_of_my_traders', 'your_share_in_team']
 
     def get_your_share_in_team(self, obj):
-        if obj.team.money_team == 0 or obj.earn_in_team_per_month == 0:
-            return 0
-        if obj.team:
-            return float((obj.earn_in_team_per_month * 100) / obj.team.money_team)
-        else:
+        if not obj.team:
             return None
+        elif obj.team.money_team == 0 or obj.earn_in_team_per_month == 0:
+            return 0
+        elif obj.team:
+            return float((obj.earn_in_team_per_month * 100) / obj.team.money_team)
 
 
 class TeamSerializer(serializers.ModelSerializer):
