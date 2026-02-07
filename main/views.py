@@ -246,20 +246,21 @@ async def change_team(request: HttpRequest, *args, **kwargs):
     team_id = request.data.get('team_id')
     new_team = await Team.objects.filter(id=team_id).afirst()
     if currency.lower() == 'game_coin':
-        if user_balance.earn_in_team < 1:
+        if user_balance.earn_in_team_per_month < 1:
             return JsonResponse({'Error': 'У вас недостаточно денег для смена команды '},
                                 status=404)
 
-        user_balance.team.money_team -= user_balance.earn_in_team
-        user_balance.earn_in_team = int(user_balance.earn_in_team / 2)
-        new_team.money_team += user_balance.earn_in_team
+        user_balance.team.money_team -= user_balance.earn_in_team_per_month
+        user_balance.earn_in_team_per_month = int(user_balance.earn_in_team_per_month / 2)
+        new_team.money_team += user_balance.earn_in_team_per_month
 
     if currency.lower() == 'token_money':
-        if user_balance.token_money > price_per_change_team and user_balance.can_change_team_for_pay:
-            user_balance.token_money -= price_per_change_team
+        if user_balance.token_money > user_balance.price_per_change_team and user_balance.can_change_team_for_pay:
+            user_balance.token_money -= user_balance.price_per_change_team
             user_balance.can_change_team_for_pay = False
             user_balance.team.money_team -= user_balance.earn_in_team
             new_team.money_team += user_balance.earn_in_team
+            user_balance.price_per_change_team *= 2
         else:
             return JsonResponse(
                 {'Error': 'Недотсаточно token_money или в этом сезоне вы уже меняли команду без потери прогресса'},

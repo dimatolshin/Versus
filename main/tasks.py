@@ -137,7 +137,7 @@ def finish_season(season_id):
 
 @shared_task(acks_late=True, reject_on_worker_lost=True)
 def create_team_stats():
-    from .models import Team, TeamStats, UserBalance,Season
+    from .models import Team, TeamStats, UserBalance, Season
     season = Season.objects.filter(active=True).afirst()
     if season:
         for i in Team.objects.all():
@@ -152,7 +152,7 @@ def create_team_stats():
                     salary += i.trader.earn_for_day
                 productivity_per_day += salary * (1 + person.my_ofice.ofice.comfort)
             TeamStats.objects.acreate(team=i, total_coins=old_stats.total_coins,
-                                      productivity_per_day=old_stats.productivity_per_day / old_stats.total_players,
+                                      productivity_per_day=old_stats.productivity_per_day / old_stats.total_players if old_stats.total_players != 0 else 0,
                                       total_players=old_stats.total_players, total_traders=len_of_traders)
     else:
         pass

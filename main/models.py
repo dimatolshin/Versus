@@ -46,6 +46,7 @@ class UserBalance(models.Model):
     team = models.ForeignKey('Team', null=True, blank=True, on_delete=models.SET_NULL, related_name='user_team',
                              verbose_name='Команда')
     can_change_team_for_pay = models.BooleanField(default=True, verbose_name='может ли менять команду')
+    price_per_change_team = models.IntegerField(default=100, verbose_name='цена на смену команды')
     my_ofice = models.ForeignKey('UserOfice', null=True, blank=True, on_delete=models.SET_NULL,
                                  related_name='user_team',
                                  verbose_name='Мой офис')
