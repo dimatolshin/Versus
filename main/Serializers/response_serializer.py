@@ -72,7 +72,8 @@ class UserBalanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserBalance
         fields = ['id', 'token_money', 'game_coin', 'team', 'can_change_team_for_pay', 'my_ofice', 'my_bank',
-                  'earn_in_team_per_month', 'earn_in_team_per_weak', 'list_of_my_traders', 'your_share_in_team']
+                  'earn_in_team_per_month', 'price_per_change_team', 'earn_in_team_per_weak', 'list_of_my_traders',
+                  'your_share_in_team']
 
     def get_your_share_in_team(self, obj):
         if not obj.team:
@@ -124,7 +125,7 @@ class SeasonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Season
-        fields = ['id', 'first_team', 'second_team', 'timer','prize']
+        fields = ['id', 'first_team', 'second_team', 'timer', 'prize']
 
     def get_timer(self, obj):
         now = timezone.now()
